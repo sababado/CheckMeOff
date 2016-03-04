@@ -1,11 +1,11 @@
 package com.sababado.checkmeoff;
 
 import android.app.Application;
-import android.util.Log;
+import android.content.Context;
 
 import com.sababado.checkmeoff.easyprovider.EasyProvider;
-import com.sababado.checkmeoff.models.ListItem;
 import com.sababado.checkmeoff.models.List;
+import com.sababado.checkmeoff.models.ListItem;
 import com.sababado.checkmeoff.myprovider.DatabaseHelper;
 
 /**
@@ -13,9 +13,8 @@ import com.sababado.checkmeoff.myprovider.DatabaseHelper;
  */
 public class MyApp extends Application {
     @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.v("MyApp", "uhh...wtf");
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
         EasyProvider.init(this, DatabaseHelper.class, List.class, ListItem.class);
     }
 }

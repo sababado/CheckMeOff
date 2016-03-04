@@ -18,8 +18,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.sababado.checkmeoff.myprovider.DatabaseHelper;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -98,8 +96,6 @@ public class EasyProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         try {
-            Log.v(TAG, "" + DatabaseHelper.class);
-            Log.v(TAG, "" + _dbHelperClass);
             dbOpenHelper = _dbHelperClass.getConstructor(Context.class).newInstance(getContext());
             return true;
         } catch (NoSuchMethodException e) {

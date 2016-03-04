@@ -28,7 +28,7 @@
 
         <meta-data
             android:name="EasyProvider_Authority"
-            android:value="com.sababado.idme.easyprovider.EasyProvider" />
+            android:value="com.sababado.checkmeoff.easyprovider.EasyProvider" />
     </application>
 
 </manifest>
