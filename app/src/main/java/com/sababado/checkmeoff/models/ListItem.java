@@ -36,4 +36,36 @@ public class ListItem {
         values.put("checked", checked);
         return values;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getListId() {
+        return listId;
+    }
+
+    public void setListId(long listId) {
+        this.listId = listId;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
 }

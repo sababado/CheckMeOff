@@ -21,14 +21,23 @@ public class List {
 
     private int testIgnoreMe;
 
-    public List(String title, long id) {
+    public List() {
+        title = null;
+        id = -1;
+    }
+
+    public List(String title) {
         this.title = title;
-        this.id = id;
     }
 
     public List(Cursor cursor) {
         title = cursor.getString(1);
         id = cursor.getLong(0);
+    }
+
+    public void fromList(List list) {
+        title = list.title;
+        id = list.id;
     }
 
     public String getTitle() {

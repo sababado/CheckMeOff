@@ -1,9 +1,12 @@
 package com.sababado.checkmeoff;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -27,6 +30,11 @@ import com.sababado.checkmeoff.models.List;
 public class ListItemsActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static String ARG_LIST_ID_ON_LOAD = "arg_list_id_on_load";
+
+    private static int listItemCount = 0;
+    private long listIdOnLoad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +61,23 @@ public class ListItemsActivity extends AppCompatActivity implements
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (savedInstanceState != null) {
+            listIdOnLoad = savedInstanceState.getLong(ARG_LIST_ID_ON_LOAD);
+        }
+
         getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(ARG_LIST_ID_ON_LOAD, listIdOnLoad);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getSupportLoaderManager().destroyLoader(0);
     }
 
     @Override
@@ -95,8 +119,11 @@ public class ListItemsActivity extends AppCompatActivity implements
 
         if (id == R.id.nav_add_list) {
             handleNavAddList();
+        } else if (id == R.id.nav_delete_list) {
+            handleNavDeleteLists();
         } else {
             Toast.makeText(ListItemsActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+            handleListSelect(item.getItemId(), item.getTitle().toString());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -104,16 +131,39 @@ public class ListItemsActivity extends AppCompatActivity implements
         return true;
     }
 
-    private static int itemId = 0;
+    private void handleListSelect(long id, String title) {
+        listIdOnLoad = id;
+        ListItemFragment fragment = (ListItemFragment) getSupportFragmentManager().findFragmentByTag(ListItemFragment.TAG);
+        if (fragment != null) {
+            fragment.swapList(id, title);
+        } else {
+            fragment = ListItemFragment.newInstance(id, title);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment, ListItemFragment.TAG)
+                    .commit();
+        }
+    }
 
     private void handleNavAddList() {
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.getMenu().getItem(0).getSubMenu().add(R.id.nav_list_group, itemId, Menu.NONE, "List " + itemId);
-
         Contracts.Contract contract = Contracts.getContract(List.class);
-        ContentValues values = (new List("List " + itemId, itemId).toContentValues());
-        getContentResolver().insert(contract.CONTENT_URI, values);
-        itemId++;
+        ContentValues values = (new List("List " + listItemCount).toContentValues());
+        Uri insertUri = getContentResolver().insert(contract.CONTENT_URI, values);
+        String id = String.valueOf(ContentUris.parseId(insertUri));
+        Cursor cursor = getContentResolver().query(contract.CONTENT_URI,
+                contract.COLUMNS,
+                BaseColumns._ID + " = ?",
+                new String[]{id}, null);
+        cursor.moveToFirst();
+        List newList = new List(cursor);
+        listIdOnLoad = newList.getId();
+        listItemCount++;
+    }
+
+    private void handleNavDeleteLists() {
+        listIdOnLoad = -1;
+        Contracts.Contract contract = Contracts.getContract(List.class);
+        getContentResolver().delete(contract.CONTENT_URI, null, null);
+        setTitle(R.string.app_name);
     }
 
     @Override
@@ -124,18 +174,36 @@ public class ListItemsActivity extends AppCompatActivity implements
         return new CursorLoader(this, uri, projection, null, null, null);
     }
 
+    private Handler handler = new Handler();
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        SubMenu subMenu = navigationView.getMenu().getItem(0).getSubMenu();
+        subMenu.clear();
+        final List listToLoad = new List();
         if (data != null && data.moveToFirst()) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            SubMenu subMenu = navigationView.getMenu().getItem(0).getSubMenu();
             int count = data.getCount();
-            itemId = count;
+            listItemCount = count;
             for (int i = 0; i < count; i++) {
                 List list = new List(data);
+                if ((listIdOnLoad == 0 && i == 0) || (list.getId() == listIdOnLoad)) {
+                    listToLoad.fromList(list);
+                }
                 subMenu.add(R.id.nav_list_group, (int) list.getId(), Menu.NONE, list.getTitle());
                 data.moveToNext();
             }
+        } else {
+            listItemCount = 0;
+        }
+
+        if (listToLoad.getId() != -1) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    handleListSelect(listToLoad.getId(), listToLoad.getTitle());
+                }
+            });
         }
     }
 
