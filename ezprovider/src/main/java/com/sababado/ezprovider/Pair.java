@@ -1,4 +1,4 @@
-package com.sababado.checkmeoff.easyprovider;
+package com.sababado.ezprovider;
 
 /**
  * Container to ease passing around a tuple of two objects. This object provides a sensible

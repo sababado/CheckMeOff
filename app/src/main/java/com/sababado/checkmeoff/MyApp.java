@@ -3,7 +3,7 @@ package com.sababado.checkmeoff;
 import android.app.Application;
 import android.content.Context;
 
-import com.sababado.checkmeoff.easyprovider.EasyProvider;
+import com.sababado.ezprovider.EasyProvider;
 import com.sababado.checkmeoff.models.List;
 import com.sababado.checkmeoff.models.ListItem;
 import com.sababado.checkmeoff.myprovider.DatabaseHelper;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.sababado.checkmeoff.easyprovider.Contracts;
+import com.sababado.ezprovider.Contracts;
 import com.sababado.checkmeoff.models.List;
 import com.sababado.checkmeoff.models.ListItem;
 

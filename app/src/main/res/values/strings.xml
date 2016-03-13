@@ -10,4 +10,5 @@
     <string name="new_list">New List</string>
     <string name="new_item">New Item</string>
     <string name="delete_lists">Delete Lists</string>
+    <string name="start_listening">Start Listening</string>
 </resources>

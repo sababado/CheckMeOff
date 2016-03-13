@@ -24,8 +24,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.sababado.checkmeoff.easyprovider.Contracts;
 import com.sababado.checkmeoff.models.List;
+import com.sababado.ezprovider.Contracts;
 
 public class ListItemsActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,

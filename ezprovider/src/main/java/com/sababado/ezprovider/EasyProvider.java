@@ -1,4 +1,4 @@
-package com.sababado.checkmeoff.easyprovider;
+package com.sababado.ezprovider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;

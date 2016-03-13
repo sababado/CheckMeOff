@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sababado.checkmeoff">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:name="com.sababado.checkmeoff.MyApp"
         android:allowBackup="true"
@@ -21,7 +23,7 @@
         </activity>
 
         <provider
-            android:name="com.sababado.checkmeoff.easyprovider.EasyProvider"
+            android:name="com.sababado.ezprovider.EasyProvider"
             android:authorities="com.sababado.checkmeoff.easyprovider.EasyProvider"
             android:enabled="true"
             android:exported="false" />

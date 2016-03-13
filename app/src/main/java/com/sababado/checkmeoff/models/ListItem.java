@@ -3,9 +3,9 @@ package com.sababado.checkmeoff.models;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.sababado.checkmeoff.easyprovider.Column;
-import com.sababado.checkmeoff.easyprovider.Id;
-import com.sababado.checkmeoff.easyprovider.Table;
+import com.sababado.ezprovider.Column;
+import com.sababado.ezprovider.Id;
+import com.sababado.ezprovider.Table;
 
 /**
  * Created by robert on 2/28/16.
