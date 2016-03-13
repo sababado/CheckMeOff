@@ -1,7 +1,7 @@
 package com.sababado.checkmeoff;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,12 +16,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sababado.checkmeoff.easyprovider.Contracts;
@@ -33,8 +36,10 @@ public class ListItemsActivity extends AppCompatActivity implements
 
     private static String ARG_LIST_ID_ON_LOAD = "arg_list_id_on_load";
 
-    private static int listItemCount = 0;
     private long listIdOnLoad;
+
+    private EditText addListTextView;
+    private AlertDialog addListDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,10 @@ public class ListItemsActivity extends AppCompatActivity implements
         }
 
         getSupportLoaderManager().initLoader(0, null, this);
+
+        addListTextView = new EditText(this);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        addListTextView.setLayoutParams(params);
     }
 
     @Override
@@ -145,19 +154,34 @@ public class ListItemsActivity extends AppCompatActivity implements
     }
 
     private void handleNavAddList() {
-        Contracts.Contract contract = Contracts.getContract(List.class);
-        ContentValues values = (new List("List " + listItemCount).toContentValues());
-        Uri insertUri = getContentResolver().insert(contract.CONTENT_URI, values);
-        String id = String.valueOf(ContentUris.parseId(insertUri));
-        Cursor cursor = getContentResolver().query(contract.CONTENT_URI,
-                contract.COLUMNS,
-                BaseColumns._ID + " = ?",
-                new String[]{id}, null);
-        cursor.moveToFirst();
-        List newList = new List(cursor);
-        listIdOnLoad = newList.getId();
-        listItemCount++;
+        addListTextView.setText(null);
+        if (addListDialog == null) {
+            addListDialog = new AlertDialog.Builder(this)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, onAddListClickListener)
+                    .setTitle(R.string.new_list)
+                    .setView(addListTextView)
+                    .create();
+        }
+        addListDialog.show();
     }
+
+    private DialogInterface.OnClickListener onAddListClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            Contracts.Contract contract = Contracts.getContract(List.class);
+            ContentValues values = (new List(addListTextView.getText().toString())
+                    .toContentValues());
+            Uri insertUri = getContentResolver().insert(contract.CONTENT_URI, values);
+            Cursor cursor = getContentResolver().query(contract.CONTENT_URI,
+                    contract.COLUMNS,
+                    BaseColumns._ID + " = ?",
+                    new String[]{insertUri.getLastPathSegment()}, null);
+            cursor.moveToFirst();
+            List newList = new List(cursor);
+            listIdOnLoad = newList.getId();
+        }
+    };
 
     private void handleNavDeleteLists() {
         listIdOnLoad = -1;
@@ -184,7 +208,6 @@ public class ListItemsActivity extends AppCompatActivity implements
         final List listToLoad = new List();
         if (data != null && data.moveToFirst()) {
             int count = data.getCount();
-            listItemCount = count;
             for (int i = 0; i < count; i++) {
                 List list = new List(data);
                 if ((listIdOnLoad == 0 && i == 0) || (list.getId() == listIdOnLoad)) {
@@ -194,7 +217,6 @@ public class ListItemsActivity extends AppCompatActivity implements
                 data.moveToNext();
             }
         } else {
-            listItemCount = 0;
         }
 
         if (listToLoad.getId() != -1) {
