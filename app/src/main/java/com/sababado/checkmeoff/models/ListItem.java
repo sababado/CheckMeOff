@@ -29,6 +29,21 @@ public class ListItem {
         checked = cursor.getInt(3) == 1;
     }
 
+    private ListItem() {
+        checked = false;
+    }
+
+    public ListItem(long listId) {
+        this();
+        this.listId = listId;
+    }
+
+    public ListItem(long listId, String label) {
+        this();
+        this.listId = listId;
+        this.label = label;
+    }
+
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues(3);
         values.put("listId", listId);

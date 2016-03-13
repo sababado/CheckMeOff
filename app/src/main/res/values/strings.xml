@@ -8,5 +8,6 @@
     <string name="delete">Delete</string>
 
     <string name="new_list">New List</string>
+    <string name="new_item">New Item</string>
     <string name="delete_lists">Delete Lists</string>
 </resources>

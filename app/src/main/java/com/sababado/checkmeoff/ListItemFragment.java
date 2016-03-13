@@ -1,14 +1,19 @@
 package com.sababado.checkmeoff;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sababado.checkmeoff.easyprovider.Contracts;
@@ -34,6 +42,9 @@ public class ListItemFragment extends ListFragment implements LoaderManager.Load
     private static final long NO_ID = -1;
     private long listId = NO_ID;
     private Callbacks callbacks;
+    FloatingActionButton fab;
+    AlertDialog addItemDialog;
+    EditText addItemEditText;
 
     public static ListItemFragment newInstance(long listId, String title) {
         Bundle args = new Bundle();
@@ -61,10 +72,52 @@ public class ListItemFragment extends ListFragment implements LoaderManager.Load
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup view = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
+
+        fab = new FloatingActionButton(getActivity());
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.BOTTOM | Gravity.END;
+        fab.setLayoutParams(params);
+        fab.setImageResource(R.drawable.ic_add);
+
+        view.addView(fab);
+
+        addItemEditText = new EditText(getActivity());
+        return view;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setListAdapter(adapter);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addItemEditText.setText(null);
+                if (addItemDialog == null) {
+                    addItemDialog = new AlertDialog.Builder(getContext())
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .setPositiveButton(android.R.string.ok, onAddItemClick)
+                            .setTitle(R.string.new_item)
+                            .setView(addItemEditText)
+                            .create();
+                }
+                addItemDialog.show();
+            }
+        });
     }
+
+    private DialogInterface.OnClickListener onAddItemClick = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            ListItem listItem = new ListItem(listId, addItemEditText.getText().toString().trim());
+            ContentValues values = listItem.toContentValues();
+            Contracts.Contract contract = Contracts.getContract(ListItem.class);
+            getActivity().getContentResolver().insert(contract.CONTENT_URI, values);
+        }
+    };
 
     @Override
     public void onDestroy() {
@@ -135,6 +188,20 @@ public class ListItemFragment extends ListFragment implements LoaderManager.Load
         }
     }
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Contracts.Contract contract = Contracts.getContract(ListItem.class);
+
+        ContentValues values = new ContentValues(1);
+        ListItemAdapter.ViewHolder vh = (ListItemAdapter.ViewHolder) v.getTag();
+        values.put("checked", !vh.checked);
+
+        getActivity().getContentResolver().update(contract.CONTENT_URI,
+                values,
+                BaseColumns._ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
     private class ListItemAdapter extends CursorAdapter {
         private LayoutInflater inflater;
 
@@ -148,7 +215,6 @@ public class ListItemFragment extends ListFragment implements LoaderManager.Load
             View view = inflater.inflate(R.layout.fragment_listitem, parent, false);
             ViewHolder vh = new ViewHolder();
             vh.text1 = (TextView) view.findViewById(R.id.text1);
-            vh.text2 = (TextView) view.findViewById(R.id.text2);
             view.setTag(vh);
             return view;
         }
@@ -158,15 +224,15 @@ public class ListItemFragment extends ListFragment implements LoaderManager.Load
             ListItem listItem = new ListItem(cursor);
             ViewHolder vh = (ViewHolder) view.getTag();
             vh.text1.setText(listItem.getLabel());
-            vh.text2.setText(String.valueOf(listItem.getId()));
             int checkedColor = getResources().getColor(android.R.color.holo_orange_light);
             int normalColor = getResources().getColor(android.R.color.white);
             view.setBackgroundColor(listItem.isChecked() ? checkedColor : normalColor);
+            vh.checked = listItem.isChecked();
         }
 
         private class ViewHolder {
             TextView text1;
-            TextView text2;
+            boolean checked;
         }
     }
 
