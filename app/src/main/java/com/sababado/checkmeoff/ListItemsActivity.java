@@ -32,7 +32,8 @@ import com.sababado.checkmeoff.models.List;
 
 public class ListItemsActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        ListItemFragment.Callbacks {
 
     private static String ARG_LIST_ID_ON_LOAD = "arg_list_id_on_load";
 
@@ -100,28 +101,6 @@ public class ListItemsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.list_items, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -143,7 +122,7 @@ public class ListItemsActivity extends AppCompatActivity implements
     private void handleListSelect(long id, String title) {
         listIdOnLoad = id;
         ListItemFragment fragment = (ListItemFragment) getSupportFragmentManager().findFragmentByTag(ListItemFragment.TAG);
-        if (fragment != null) {
+        if (fragment != null && fragment.isAdded()) {
             fragment.swapList(id, title);
         } else {
             fragment = ListItemFragment.newInstance(id, title);
@@ -188,6 +167,17 @@ public class ListItemsActivity extends AppCompatActivity implements
         Contracts.Contract contract = Contracts.getContract(List.class);
         getContentResolver().delete(contract.CONTENT_URI, null, null);
         setTitle(R.string.app_name);
+    }
+
+    @Override
+    public void onListDeleted(long listId) {
+        ListItemFragment fragment = (ListItemFragment) getSupportFragmentManager().findFragmentByTag(ListItemFragment.TAG);
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(fragment)
+                    .commit();
+            setTitle(null);
+        }
     }
 
     @Override
