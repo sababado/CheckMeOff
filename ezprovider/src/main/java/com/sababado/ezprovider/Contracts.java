@@ -39,6 +39,7 @@ public abstract class Contracts {
         public final String CONTENT_URI_STRING;
         public final Uri CONTENT_URI;
         public final int CODE;
+        public final static String ID_COLUMN_NAME = BaseColumns._ID;
 
         public final String SQL_CREATE;
 
@@ -67,7 +68,7 @@ public abstract class Contracts {
                 }
 
                 if (id != null) {
-                    String columnName = BaseColumns._ID;
+                    String columnName = ID_COLUMN_NAME;
                     columnNameStatementPair.first = columnName;
                     columnNameStatementPair.second = columnName + " INTEGER PRIMARY KEY AUTOINCREMENT,";
                     columnMap.put(0, columnNameStatementPair);
@@ -103,7 +104,8 @@ public abstract class Contracts {
             sqlCreate += ");";
             SQL_CREATE = sqlCreate;
 
-            Log.v("contracts", sqlCreate);
+            if (BuildConfig.DEBUG)
+                Log.v("contracts", sqlCreate);
         }
 
         public Uri getContentUri(long id) {

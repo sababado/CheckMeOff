@@ -35,7 +35,7 @@ import java.util.Collection;
  */
 public class EasyProvider extends ContentProvider {
     private static final String TAG = EasyProvider.class.getSimpleName();
-    static String _AUTHORITY;
+    public static String _AUTHORITY;
     private static Class<? extends SQLiteOpenHelper> _dbHelperClass;
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private SQLiteOpenHelper dbOpenHelper;
