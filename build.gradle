@@ -27,3 +27,20 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+def getBintrayPwd() {
+    def env = System.getenv("bintray_apikey")
+    if (env == null) {
+        env = "${bintray_apikey}"
+    }
+    return env;
+}
+
+def getBintrayGpg() {
+    def env = System.getenv("bintray_gpg_password")
+    if (env == null) {
+        env = "${bintray_gpg_password}"
+    }
+    return env;
+}
+

@@ -11,7 +11,6 @@ if (project.hasProperty("android")) { // Android libraries
     task javadoc(type: Javadoc) {
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        failOnError false
     }
 } else { // Java libraries
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -31,12 +30,9 @@ artifacts {
 }
 
 // Bintray
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = developerId
+    key = binKey
 
     configurations = ['archives']
     pkg {
@@ -44,18 +40,17 @@ bintray {
         name = bintrayName
         desc = libraryDescription
         websiteUrl = siteUrl
-        issueTrackerUrl = siteUrl+'/issues'
         vcsUrl = gitUrl
         licenses = allLicenses
         githubRepo = githubRepository //Optional Github repository
         githubReleaseNotesFile = 'README.md' //Optional Github readme file
-        publish = false
+        publish = true
         publicDownloadNumbers = true
         version {
             desc = libraryDescription
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = properties.getProperty("bintray.gpg.password")
+                passphrase = binGpg
                 //Optional. The passphrase for GPG signing'
             }
         }

@@ -2,7 +2,7 @@ ext {
     bintrayRepo = 'maven'
     bintrayName = 'ezprovider'   // Has to be same as your library module name
 
-    publishedGroupId = 'com.sababado'
+    publishedGroupId = 'com.sababado.ezprovider'
     libraryName = 'EzProvider'
     artifact = 'ezprovider'     // Has to be same as your library module name
 
@@ -13,15 +13,18 @@ ext {
     gitUrl = 'https://github.com/sababado/EzProvider.git'
     githubRepository= 'sababado/EzProvider'
 
-    libraryVersion = '1.0.1'
+    libraryVersion = '1.0.0'
 
-    developerId = 'sababado'
+    developerId = 'rat141312'
     developerName = 'Robert Szabo'
     developerEmail = 'robert.james.szabo@gmail.com'
 
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
     allLicenses = ["Apache-2.0"]
+
+    binKey = getBintrayPwd()
+    binGpg = getBintrayGpg()
 }
 
 // Place it at the end of the file
