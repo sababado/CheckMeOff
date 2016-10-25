@@ -1,14 +1,12 @@
 package com.sababado.ezprovider;
 
-import android.support.annotation.NonNull;
-
 import java.lang.reflect.Field;
 
 /**
  * Created by robert on 2/28/16.
  */
 class Utils {
-    public static String getDbTypeFromField(@NonNull Field field) {
+    static String getDbTypeFromField(Field field) {
         Class<?> cls = field.getType();
         if (cls.isPrimitive()) {
             if (Short.TYPE.equals(cls) || Integer.TYPE.equals(cls) ||

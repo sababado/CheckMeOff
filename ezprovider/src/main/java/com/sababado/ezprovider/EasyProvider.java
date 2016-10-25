@@ -14,7 +14,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -25,10 +24,10 @@ import java.util.Collection;
 
 /**
  * Start by calling 'init' from the application class.
- * <p/>
+ *
  * Use the Column annotation and specify the index of each column in the table.
  * This way new fields can be added in the future worry free.
- * <p/>
+ *
  * One Id field must be specified using the Id annotation. All other fields must be annotated
  * with the Column annotation and must at least specify the column index. 0 is reserved for the ID field.
  * Created by robert on 2/28/16.
@@ -120,7 +119,6 @@ public class EasyProvider extends ContentProvider {
                 + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
     }
 
-    @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -153,13 +151,11 @@ public class EasyProvider extends ContentProvider {
         return cursor;
     }
 
-    @Nullable
     @Override
     public String getType(Uri uri) {
         return null;
     }
 
-    @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();

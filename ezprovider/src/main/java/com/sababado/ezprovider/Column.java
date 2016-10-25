@@ -15,14 +15,14 @@ public @interface Column {
     /**
      * The name of the column to use in the database.
      *
-     * @return
+     * @return The name of the column.
      */
     String name() default "";
 
     /**
      * The column index.
      *
-     * @return
+     * @return The column index.
      */
     int value();
 }

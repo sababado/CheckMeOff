@@ -13,13 +13,15 @@ import java.lang.annotation.Target;
 public @interface Table {
     /**
      * Name of the table.
-     * @return
+     *
+     * @return Name of the table.
      */
     String name();
 
     /**
      * Number code for this table. It should be unique in relation to other tables.
-     * @return
+     *
+     * @return Number code for the table.
      */
     int code();
 }
