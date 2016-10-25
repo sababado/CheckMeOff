@@ -1,0 +1,32 @@
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'ezprovider'   // Has to be same as your library module name
+
+    publishedGroupId = 'com.sababado'
+    libraryName = 'EzProvider'
+    artifact = 'ezprovider'     // Has to be same as your library module name
+
+    libraryDescription = 'Android Library to remove all of the boilerplate associated with basic SQLite tables.'
+
+    // Your github repo link
+    siteUrl = 'https://github.com/sababado/EzProvider'
+    gitUrl = 'https://github.com/sababado/EzProvider.git'
+    githubRepository= 'sababado/EzProvider'
+
+    libraryVersion = '1.0.1'
+
+    developerId = 'sababado'
+    developerName = 'Robert Szabo'
+    developerEmail = 'robert.james.szabo@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+// Place it at the end of the file
+apply from: 'install.gradle'
+apply from: 'bintray.gradle'
+
+//apply from: 'https://raw.githubusercontent.com/nisrulz/JCenter/master/installv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nisrulz/JCenter/master/bintrayv1.gradle'
